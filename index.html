@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+body { background-color: #1d1d1d; }
+/*canvas { background-color: yellow; }*/
+/*canvas {position: relative;}*/
+
+/*#thetop 
+{
+	position: absolute;
+	color:blue;
+	width:100%;
+	height:30px;
+	top:0; left: 0;
+	/*z-index: 20;*/
+/*}*/
+
+/*#bottom {
+	position: relative;
+	color:blue;
+	width:100%;
+	height:30px;
+	top:0; left: 0;
+	z-index: 20;
+}
+*/
+#logo {
+  position: absolute;
+  z-index: 20;
+  top: 20px;
+  left: 30px;
+/*  border:1px solid red;
+*/  padding:10px;
+}
+
+p {
+    color:white;
+    font-size: 50px;
+    font-family: 'Futura';
+    letter-spacing: 3px;
+}
+
+#welcome {
+    position: absolute;
+    margin: 0 auto;
+    left:0; top:25%; right:0; bottom:0;
+    width:800px;
+    height:200px;
+    border:1px solid red;
+ }
+
+ #prediction {
+  bottom: 45px;
+  position: absolute;
+  text-align: center;
+  margin: 0 auto;
+  font-size: 35px;
+  border: 1px solid white;
+  padding: 10px;
+  left: 25%;
+ }
+
+ #unleash, #connect, #life {
+    position: absolute;
+    margin: 0 auto;
+    left:0; top:50%; right:0; bottom:0;
+    width:1000px;
+    height:100px;
+    /*border:1px solid red;*/
+    font-size: 35px;
+ }
+
+#connect, #life {
+    display:none;
+}
+
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
+<body>
+
+<audio autoplay loop>
+    <source src="audio/lazysummer.mp3" type="audio/mpeg">
+</audio
+
+<div id="thetop"></div>
+<div id="thebottom"></div>
+<img id="logo" src="img/cisco-white.png" width="150" height="84" />
+<!-- <p id= "welcome">CISCO <br />is connecting the unconnected</p> -->
+<p id="unleash">CISCO strives to unleash the power of the Internet...</p>
+<p id="connect">..by connecting networks made from people and their visions..</p>
+<p id="life">..to bring to life the Internet of Everything.</p>
+
+
+
+<div style:"text-align:center;"><p id="prediction" style="display:none;">Connect the possibilities: enter your prediction here &rarr;</p></div>
+
+<script>
+$(document).ready(function(){
+        $("#unleash").delay(3000).fadeOut("3000");
+        $("#connect").delay(6000).fadeIn("3000").delay(3000).fadeOut(2000);
+        $("#life").delay(13000).fadeIn("3000").delay(3000).fadeOut(3000);
+        $("#prediction").delay(21000).fadeIn("slow");
+});
+</script>
+
+<div id="everything">
+
+<script>
+
+var Space = (function () {
+    function Space() {
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.ratio = window.innerHeight < 400 ? 0.6 : 1;
+        this.r = 120;
+        this.counter = 0;
+    }
+    Space.prototype.init = function () {
+        this.createElement();
+        this.loop();
+    };
+    Space.prototype.createElement = function () {
+        var scale = this.ratio;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.canvas.style.width = '100%';
+        // this.canvas.style.background = 'rgb(0, 0, 0)';
+        // this.canvas.style.background = "#1d1d1d";
+        this.ctx.transform(scale, 0, 0, -scale, this.canvas.width / 2, this.canvas.height / 2);
+        document.body.appendChild(this.canvas);
+        for (var i = 0; i < 450; i++) {
+            this.createParticle();
+        }
+    };
+    Space.prototype.createParticle = function () {
+        this.particles.push({
+            // color: Math.random() > 0.5 ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.4)",
+            color: Math.random() > 0.2 ? "rgba(184,184,141,1)": "rgba(225, 217, 216, 0.4)",
+            // radius: Math.random() * 5,
+            radius: Math.random() * 10,
+
+            // x: Math.cos(Math.random() * 7 + Math.PI) * this.r,
+            x: Math.cos(Math.random() * 30 + Math.PI) * this.r,
+
+            y: Math.sin(Math.random() * 30 + Math.PI) * this.r,
+            // ring: Math.random() * this.r * 3,
+            ring: Math.random() * this.r * 11,
+
+            move: ((Math.random() * 4) + 1) / 500,
+            random: Math.random() * 7
+        });
+    };
+    Space.prototype.moveParticle = function (p) {
+        p.ring = Math.max(p.ring - 1, this.r);
+        p.random += p.move;
+        p.x = Math.cos(p.random + Math.PI) * p.ring;
+        p.y = Math.sin(p.random + Math.PI) * p.ring;
+    };
+    Space.prototype.resetParticle = function (p) {
+        p.ring = Math.random() * this.r * 3;
+        p.radius = Math.random() * 5;
+    };
+    Space.prototype.disappear = function (p) {
+        if (p.radius < 0.8) {
+            this.resetParticle(p);
+        }
+        p.radius *= 0.994;
+    };
+    Space.prototype.draw = function (p) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = p.color;
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fill();
+    };
+    Space.prototype.loop = function () {
+        var _this = this;
+        this.ctx.clearRect(-this.canvas.width , -this.canvas.height, this.canvas.width * 2, this.canvas.height * 2);
+        if (this.counter < this.particles.length) {
+            this.counter++;
+        }
+
+        this.ctx.shadowBlur = 30;
+        this.ctx.shadowColor = "#fff";
+        // this.ctx.shadowColor = "#d3ffce";
+
+        for (var i = 0; i < this.counter; i++) {
+            this.disappear(this.particles[i]);
+            this.moveParticle(this.particles[i]);
+            this.draw(this.particles[i]);
+        }
+        requestAnimationFrame(function () { return _this.loop(); });
+    };
+    return Space;
+})();
+window.onload = function () {
+    var space = new Space();
+    space.init();
+};
+
+</script>
+
+<div id="thetop"></div>
+
+</div> <!-- everything -->
+
+</body>
+</html>
